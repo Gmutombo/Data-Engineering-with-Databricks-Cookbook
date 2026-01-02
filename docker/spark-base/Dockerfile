@@ -1,50 +1,42 @@
-FROM base
+FROM spark-delta-os-base:latest
 
-# -- Layer: Image Metadata
+# -- Image Metadata
 ARG build_date
-ARG delta_package_version
-ARG spark_xml_package_version
-
 LABEL org.label-schema.build-date=${build_date}
-LABEL org.label-schema.description="Data Engineering wih Apache Spark and Delta Lake Cookbook - Spark base image"
+LABEL org.label-schema.description="Data Engineering with Apache Spark and Delta Lake Cookbook - Spark base image"
 LABEL org.label-schema.schema-version="1.0"
 
-# -- Layer: Apache Spark
-ARG spark_version
-ARG hadoop_version
+# -- Versions
+ARG spark_version=3.4.1
+ARG hadoop_version=3
+ARG delta_package=io.delta:delta-core_2.12:2.4.0
+ARG spark_xml_package=com.databricks:spark-xml_2.12:0.17.0
+ARG spark_kafka_package=org.apache.spark:spark-sql-kafka-0-10_2.12:3.4.1
 
-RUN curl https://archive.apache.org/dist/spark/spark-${spark_version}/spark-${spark_version}-bin-hadoop${hadoop_version}.tgz -o spark.tgz && \
-    tar -xf spark.tgz && \
-    mv spark-${spark_version}-bin-hadoop${hadoop_version} /usr/bin/ && \
-    echo "alias pyspark=/usr/bin/spark-${spark_version}-bin-hadoop${hadoop_version}/bin/pyspark" >> ~/.bashrc && \
-    echo "alias spark-shell=/usr/bin/spark-${spark_version}-bin-hadoop${hadoop_version}/bin/spark-shell" >> ~/.bashrc && \
-    mkdir /usr/bin/spark-${spark_version}-bin-hadoop${hadoop_version}/logs && \
-    rm spark.tgz
+# -- Install Spark
+RUN curl -fsSL https://archive.apache.org/dist/spark/spark-${spark_version}/spark-${spark_version}-bin-hadoop${hadoop_version}.tgz \
+    -o spark.tgz \
+ && tar -xzf spark.tgz \
+ && mv spark-${spark_version}-bin-hadoop${hadoop_version} /opt/spark \
+ && rm spark.tgz
 
-ENV SPARK_HOME /usr/bin/spark-${spark_version}-bin-hadoop${hadoop_version}
-ENV SPARK_MASTER_HOST spark-master
-ENV SPARK_MASTER_PORT 7077
-ENV PYSPARK_PYTHON python3
+ENV SPARK_HOME=/opt/spark
+ENV PATH=$SPARK_HOME/bin:$PATH
+ENV PYSPARK_PYTHON=python3
 
-# -- Runtime
-WORKDIR ${SPARK_HOME}
+# -- Spark config
+RUN mkdir -p $SPARK_HOME/conf && \
+    echo "spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension" >> $SPARK_HOME/conf/spark-defaults.conf && \
+    echo "spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog" >> $SPARK_HOME/conf/spark-defaults.conf && \
+    echo "spark.jars.packages=${delta_package},${spark_xml_package},${spark_kafka_package}" >> $SPARK_HOME/conf/spark-defaults.conf
 
-USER root
+# -- Runtime user
+ARG NBuser=nbuser
+ARG GROUP=nbuser
 
-ARG NBuser=NBuser
-ARG GROUP=NBuser
-
-RUN groupadd -r ${GROUP} && useradd -r -m -g ${GROUP} ${NBuser}
-
-RUN chown -R "${NBuser}":"${GROUP}" /home/"${NBuser}"/ \
-    && chown -R "${NBuser}":"${GROUP}" "${SPARK_HOME}"\
-    && chown -R "${NBuser}":"${GROUP}" "${SHARED_WORKSPACE}"
+RUN groupadd -r ${GROUP} && useradd -m -r -g ${GROUP} ${NBuser} \
+ && chown -R ${NBuser}:${GROUP} /opt/spark \
+ && chown -R ${NBuser}:${GROUP} ${SHARED_WORKSPACE}
 
 USER ${NBuser}
-
-
-RUN ${SPARK_HOME}/bin/spark-shell --packages io.delta:${delta_package_version} \
-    --conf "spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension" \
-    --conf "spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog" \
- && ${SPARK_HOME}/bin/spark-shell --packages com.databricks:${spark_xml_package_version} \
- && ${SPARK_HOME}/bin/spark-shell --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.4.1
+WORKDIR ${SPARK_HOME}
