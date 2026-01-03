@@ -1,5 +1,5 @@
-ARG java_image_tag=17-jre
-FROM eclipse-temurin:${java_image_tag}
+
+FROM eclipse-temurin:17-jre
 
 # -- Layer: Image Metadata
 
@@ -22,19 +22,11 @@ RUN mkdir -p ${shared_workspace}/data \
  && apt-get install -y --no-install-recommends \
       curl \
       python3 \
+      python3-pip \
       r-base \
       netcat-openbsd \
  && ln -s /usr/bin/python3 /usr/bin/python \
- && apt-get clean \
- && rm -rf /var/lib/apt/lists/*
-
-RUN apt-get update -y \
- && apt-get install -y --no-install-recommends \ 
-        build-essential \ 
-        manpages-dev \ 
-        python3-pip \ 
-        python3-dev
- && pip3 install  --no-cache-dir --upgrade pip \
+ && pip3 install --no-cache-dir --upgrade pip \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
