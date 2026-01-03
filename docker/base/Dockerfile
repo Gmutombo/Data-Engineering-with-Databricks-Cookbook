@@ -26,7 +26,6 @@ RUN mkdir -p ${shared_workspace}/data \
       r-base \
       netcat-openbsd \
  && ln -s /usr/bin/python3 /usr/bin/python \
- && pip3 install --no-cache-dir --upgrade pip --break-system-packages \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
