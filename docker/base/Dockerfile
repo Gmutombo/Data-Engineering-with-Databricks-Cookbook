@@ -30,7 +30,7 @@ RUN mkdir -p ${shared_workspace}/data \
  && rm -rf /var/lib/apt/lists/*
 
 # We are explicitly pinning the versions of various libraries which this Docker image runs on.
-RUN pip3 install --quiet --no-cache-dir \
+RUN pip3 install --quiet --no-cache-dir --break-system-packages \
     delta-spark==${delta_spark_version} \
     deltalake==${deltalake_version} \
     pandas==${pandas_version}
