@@ -23,6 +23,7 @@ RUN mkdir -p ${shared_workspace}/data \
       curl \
       python3 \
       python3-pip \
+      python3-dev \
       r-base \
       netcat-openbsd \
       build-essential \
