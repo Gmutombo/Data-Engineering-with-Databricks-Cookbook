@@ -9,7 +9,7 @@ volumes:
 
 services:
   zookeeper:
-    image: bitnami/zookeeper:3.8.2
+    image: bitnami/zookeeper:3.8.2-debian-11
     container_name: zookeeper
     ports:
       - "2181:2181"
