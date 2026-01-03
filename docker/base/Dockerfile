@@ -33,8 +33,8 @@ RUN apt-get update -y \
         build-essential \ 
         manpages-dev \ 
         python3-pip \ 
-        python3-dev && \ 
-    pip3 install  --no-cache-dir --upgrade pip 
+        python3-dev
+ && pip3 install  --no-cache-dir --upgrade pip \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
