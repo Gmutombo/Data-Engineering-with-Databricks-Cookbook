@@ -1,4 +1,4 @@
-FROM spark-delta-base:latest
+FROM spark-base:3.4.1
 
 # -- Layer: Image Metadata
 
@@ -15,20 +15,29 @@ LABEL org.label-schema.description="JupyterLab image"
 
 # -- Layer: JupyterLab + Python kernel for PySpark
 
-ARG spark_version=3.5.0
-ARG jupyterlab_version=4.1.6
-ARG sparksql_magic_version=0.0.3
-ARG kafka_python_version=2.0.2
+
+ARG jupyterlab_version
+ARG sparksql_magic_version
+ARG kafka_python_version
 
 
-RUN pip3 install --no-cache-dir wget==3.2 \
-    pyspark==${spark_version} \
-    jupyterlab==${jupyterlab_version} \
-    sparksql-magic==${sparksql_magic_version} \
-    kafka-python==${kafka_python_version}
+# ------------------------------------------------------------
+# Python + Jupyter
+# ------------------------------------------------------------
+
+RUN pip3 install --no-cache-dir \
+      jupyterlab==${jupyterlab_version} \
+      sparksql-magic==${sparksql_magic_version} \
+      kafka-python==${kafka_python_version} \
+      delta-spark \
+      pyspark
+
+ENV PYSPARK_PYTHON=python3
+ENV PYSPARK_DRIVER_PYTHON=jupyter
+ENV PYSPARK_DRIVER_PYTHON_OPTS="lab --ip=0.0.0.0 --no-browser --allow-root"
 
 EXPOSE 8888
 
-WORKDIR ${SHARED_WORKSPACE}
-# COPY docker/jupyterlab/00-first.py /root/.ipython/profile_default/startup/00-first.py
-CMD ["jupyter", "lab", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root", "--NotebookApp.token="]
+WORKDIR /workspace
+
+CMD ["jupyter", "lab"]
