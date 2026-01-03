@@ -77,7 +77,7 @@ function buildImages() {
       --build-arg deltalake_version="${DELTALAKE_VERSION}" \
       --build-arg pandas_version="${PANDAS_VERSION}" \
       -f docker/base/Dockerfile \
-      -t base:latest .
+      -t spark-delta-os-base:latest .
 
     docker build \
       --build-arg build_date="${BUILD_DATE}" \
