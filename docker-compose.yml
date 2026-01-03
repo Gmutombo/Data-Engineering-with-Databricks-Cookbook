@@ -1,15 +1,15 @@
-version: "3.6"
 volumes:
   shared-workspace:
-    name: "distributed-file-system"
+    name: distributed-file-system
     driver: local
     driver_opts:
-      o: bind
       type: none
-      device: ./
+      o: bind
+      device: .
+
 services:
   zookeeper:
-    image: docker.io/bitnami/zookeeper:3.8.2
+    image: bitnami/zookeeper:3.8.2
     container_name: zookeeper
     ports:
       - "2181:2181"
@@ -17,8 +17,9 @@ services:
       - shared-workspace:/opt/workspace
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
+
   kafka:
-    image: docker.io/bitnami/kafka:3.5.1
+    image: bitnami/kafka:3.5.1-debian-11
     container_name: kafka
     ports:
       - "9092:9092"
@@ -26,30 +27,24 @@ services:
       - BITNAMI_DEBUG=yes
       - KAFKA_BROKER_ID=1
       - KAFKA_ENABLE_KRAFT=false
-      - KAFKA_CFG_LISTENERS=PLAINTEXT://kafka:9092
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
       - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
       - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT
       - ALLOW_PLAINTEXT_LISTENER=yes
     depends_on:
       - zookeeper
-  jupyterlab:
-    image: jupyterlab:4.0.2-spark-3.4.1
-    container_name: jupyterlab
-    ports:
-      - 8888:8888
-      - 4040:4040
-    volumes:
-      - shared-workspace:/opt/workspace
+
   spark-master:
     image: spark-master:3.4.1
     container_name: spark-master
     ports:
-      - 8080:8080
-      - 7077:7077
+      - "8080:8080"
+      - "7077:7077"
     volumes:
       - shared-workspace:/opt/workspace
+
   spark-worker-1:
     image: spark-worker:3.4.1
     container_name: spark-worker-1
@@ -57,11 +52,12 @@ services:
       - SPARK_WORKER_CORES=1
       - SPARK_WORKER_MEMORY=512m
     ports:
-      - 8081:8081
+      - "8081:8081"
     volumes:
       - shared-workspace:/opt/workspace
     depends_on:
       - spark-master
+
   spark-worker-2:
     image: spark-worker:3.4.1
     container_name: spark-worker-2
@@ -69,8 +65,20 @@ services:
       - SPARK_WORKER_CORES=1
       - SPARK_WORKER_MEMORY=512m
     ports:
-      - 8082:8081
+      - "8082:8081"
     volumes:
       - shared-workspace:/opt/workspace
     depends_on:
       - spark-master
+
+  jupyterlab:
+    image: jupyterlab:4.0.2-spark-3.4.1
+    container_name: jupyterlab
+    ports:
+      - "8888:8888"
+      - "4040:4040"
+    volumes:
+      - shared-workspace:/opt/workspace
+    depends_on:
+      - spark-master
+      - kafka
