@@ -22,11 +22,19 @@ services:
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
+  spark-delta-os-base:
+    build:
+      context: .
+      dockerfile: docker/base/Dockerfile
+    image: spark-delta-os-base:latest
+
   spark-base:
     build:
       context: .
       dockerfile: docker/spark-base/Dockerfile
     image: spark-base:3.4.1
+    depends_on:
+      - spark-delta-os-base
 
   spark-master:
     build:
