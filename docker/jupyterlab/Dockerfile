@@ -25,7 +25,7 @@ ARG kafka_python_version
 # Python + Jupyter
 # ------------------------------------------------------------
 
-RUN pip3 install --no-cache-dir \
+RUN pip3 install --no-cache-dir --break-system-packages  \
       jupyterlab==${jupyterlab_version} \
       sparksql-magic==${sparksql_magic_version} \
       kafka-python==${kafka_python_version} \
