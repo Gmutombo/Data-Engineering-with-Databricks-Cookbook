@@ -25,6 +25,7 @@ RUN mkdir -p ${shared_workspace}/data \
       python3-pip \
       r-base \
       netcat-openbsd \
+      build-essential \
  && ln -s /usr/bin/python3 /usr/bin/python \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
