@@ -7,9 +7,9 @@ LABEL org.label-schema.description="Data Engineering with Apache Spark and Delta
 LABEL org.label-schema.schema-version="1.0"
 
 # -- Versions
-ARG spark_version
-ARG hadoop_version
-ARG scala_version
+ARG spark_version=3.4.1
+ARG hadoop_version=3
+ARG scala_version=2.12
 ARG delta_package_version
 ARG spark_xml_package_version
 
