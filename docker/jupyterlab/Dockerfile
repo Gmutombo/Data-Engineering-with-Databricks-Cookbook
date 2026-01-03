@@ -16,9 +16,9 @@ LABEL org.label-schema.description="JupyterLab image"
 # -- Layer: JupyterLab + Python kernel for PySpark
 
 
-ARG jupyterlab_version
-ARG sparksql_magic_version
-ARG kafka_python_version
+ARG jupyterlab_version=4.0.2
+ARG sparksql_magic_version=0.0.3
+ARG kafka_python_version=2.0.2
 
 
 # ------------------------------------------------------------
@@ -35,6 +35,7 @@ RUN pip3 install --no-cache-dir --break-system-packages  \
 ENV PYSPARK_PYTHON=python3
 ENV PYSPARK_DRIVER_PYTHON=jupyter
 ENV PYSPARK_DRIVER_PYTHON_OPTS="lab --ip=0.0.0.0 --no-browser --allow-root"
+ENV JUPYTER_ENABLE_LAB=yes
 
 EXPOSE 8888
 
