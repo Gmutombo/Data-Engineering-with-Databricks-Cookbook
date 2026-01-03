@@ -1,17 +1,11 @@
-ARG spark_version=3.4.1
-FROM spark-base:${spark_version}
+FROM spark-base:3.4.1
 
-# -- Image Metadata
 ARG build_date
 
-LABEL org.label-schema.build-date=${build_date}
-LABEL org.label-schema.description="Spark master image"
-LABEL org.label-schema.schema-version="1.0"
+ENV SPARK_MASTER_HOST=spark-master
+ENV SPARK_MASTER_PORT=7077
+ENV SPARK_MASTER_WEBUI_PORT=8080
 
-# -- Ensure logs directory exists
-RUN mkdir -p ${SPARK_HOME}/logs
+EXPOSE 7077 8080
 
-# -- Runtime
-EXPOSE 8080 7077
-
-CMD ["bin/spark-class", "org.apache.spark.deploy.master.Master"]
+CMD ["spark-class", "org.apache.spark.deploy.master.Master"]
