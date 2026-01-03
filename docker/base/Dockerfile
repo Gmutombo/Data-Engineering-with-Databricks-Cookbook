@@ -4,9 +4,9 @@ FROM eclipse-temurin:17-jre
 # -- Layer: Image Metadata
 
 ARG build_date
-ARG delta_spark_version
-ARG deltalake_version
-ARG pandas_version
+ARG delta_spark_version=2.4.0
+ARG deltalake_version=0.17.2
+ARG pandas_version=2.2.2
 
 LABEL org.label-schema.build-date=${build_date}
 LABEL org.label-schema.description="Data Engineering wih Apache Spark and Delta Lake Cookbook  - Cluster base image"
