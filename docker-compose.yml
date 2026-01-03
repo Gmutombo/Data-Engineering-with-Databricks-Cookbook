@@ -1,3 +1,12 @@
+version: "3.6"
+volumes:
+  shared-workspace:
+    name: "distributed-file-system"
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ./
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:7.6.0
