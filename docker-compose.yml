@@ -22,12 +22,20 @@ services:
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
+  spark-base:
+    build:
+      context: .
+      dockerfile: docker/spark-base/Dockerfile
+    image: spark-base:3.4.1
+
   spark-master:
     build:
       context: .
       dockerfile: docker/spark-master/Dockerfile
     image: spark-master:3.4.1
     container_name: spark-master
+    depends_on:
+      - spark-base
     ports:
       - "8080:8080"
       - "7077:7077"
