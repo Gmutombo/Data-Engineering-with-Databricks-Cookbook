@@ -14,8 +14,5 @@ RUN mkdir -p ${SPARK_HOME}/logs
 # -- Runtime
 EXPOSE 8081
 
-CMD [
-  "bin/spark-class",
-  "org.apache.spark.deploy.worker.Worker",
-  "spark://${SPARK_MASTER_HOST}:${SPARK_MASTER_PORT}"
-]
+CMD bin/spark-class org.apache.spark.deploy.worker.Worker spark://${SPARK_MASTER_HOST}:${SPARK_MASTER_PORT}
+
