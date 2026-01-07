@@ -28,6 +28,7 @@ ARG kafka_python_version=2.0.2
 RUN pip3 install --no-cache-dir --break-system-packages  \
       jupyterlab==${jupyterlab_version} \
       sparksql-magic==${sparksql_magic_version} \
+      six \
       kafka-python==${kafka_python_version} \
       delta-spark \
       pyspark
