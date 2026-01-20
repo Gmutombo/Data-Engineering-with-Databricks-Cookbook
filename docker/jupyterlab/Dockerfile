@@ -25,13 +25,16 @@ ARG kafka_python_version=2.3.0
 # Python + Jupyter
 # ------------------------------------------------------------
 
-RUN pip3 install --no-cache-dir --break-system-packages  \
+RUN python3 -m pip install --no-cache-dir --break-system-packages -U pip setuptools wheel && \
+    python3 -m pip uninstall -y kafka kafka-python && \
+    python3 -m pip install --no-cache-dir --break-system-packages \
       jupyterlab==${jupyterlab_version} \
       sparksql-magic==${sparksql_magic_version} \
       six \
       kafka-python==${kafka_python_version} \
       delta-spark \
-      pyspark
+      pyspark && \
+    python3 -c "import kafka; from kafka import KafkaProducer; print('kafka-python OK')"
 
 ENV PYSPARK_PYTHON=python3
 ENV PYSPARK_DRIVER_PYTHON=jupyter
