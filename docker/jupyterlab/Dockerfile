@@ -18,7 +18,7 @@ LABEL org.label-schema.description="JupyterLab image"
 
 ARG jupyterlab_version=4.0.2
 ARG sparksql_magic_version=0.0.3
-ARG kafka_python_version=2.0.3
+ARG kafka_python_version=2.3.0
 
 
 # ------------------------------------------------------------
