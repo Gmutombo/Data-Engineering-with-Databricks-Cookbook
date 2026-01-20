@@ -25,8 +25,7 @@ ARG kafka_python_version=2.3.0
 # Python + Jupyter
 # ------------------------------------------------------------
 
-RUN python3 -m pip install --no-cache-dir --break-system-packages -U pip setuptools wheel && \
-    python3 -m pip uninstall -y kafka kafka-python && \
+RUN python3 -m pip uninstall -y kafka kafka-python || true && \
     python3 -m pip install --no-cache-dir --break-system-packages \
       jupyterlab==${jupyterlab_version} \
       sparksql-magic==${sparksql_magic_version} \
